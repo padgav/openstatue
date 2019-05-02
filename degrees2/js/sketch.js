@@ -5,6 +5,7 @@ let camPoseNet;
 let poses = [];
 let theta1 = [];
 let theta2 = [];
+let statueAngles = [];
 	
 //let skeleton_vectors = new Array() ;
 /*
@@ -28,7 +29,7 @@ let camPoses = [];
 let skeletons = [];
 let skelVecs = [];
 let camSkel = [];
-
+var s1 = s2 = null;
 let count = 0;  
 let camX = 255;
 	  var v1=null;
@@ -88,7 +89,7 @@ function imageReady(){
 }
 
 function modelReady() {
-  select('#status').html('Model Loaded');
+  select('#status').html('Imita la posizione del braccio sx (a dx dell\'immagine)');
 	//poseNet.multiPose(img);
 	poseNet.singlePose(img);
 	
@@ -119,6 +120,15 @@ for (let i = 0; i < poses.length; i++) {
 	  vectorAB=createVector(partB.position.x - partA.position.x, partB.position.y - partA.position.y);
 	  vectorAB.name = currentA+currentB;
 	 
+	  //skeleton_vectors['LES'] = null;
+	  //skeleton_vectors['LEW'] = null;
+	  
+	  if ((s1==null)&& vectorAB.name == "leftElbowleftShoulder")
+	  {	s1 = vectorAB; console.log("S1: ", s1);}
+	  if ((s2==null) && vectorAB.name == "leftElbowleftWrist")
+	  {	s2 = vectorAB; console.log("S2: ", s2);}
+
+	  
 	  skelVecs[count-1] = vectorAB;
 	  
 	  if( (v1 == null) || (check ==0))
@@ -171,6 +181,12 @@ for (let i = 0; i < poses.length; i++) {
 	  }
 	}
   }
+  	  if((s1!=null)&&(s2!=null))
+	  {	
+	  	statueAngles[s1.name+s2.name]= degrees(s2.angleBetween(s1));
+	    console.log("Statue angle left ELBOWSHOULDER left ELBOWWRIST: ", statueAngles[s1.name+s2.name]);
+	  }
+  
 	/////
 	showSkelVecs();
 
@@ -188,6 +204,9 @@ function showSkelVecs()
 
 function getCamPoses(results) {
 	camPoses = results;
+	let vectorCD = "";//[2];
+	let c1 = c2 = null;
+
 	//console.log("POSES: ",camPoses);
 	/*
 skeleton_vectors['LHS'] = null;
@@ -211,7 +230,7 @@ skeleton_vectors['LHRH'] = null;
 	 
 	 //skelVecs // camPoses // let skelVecs = [];
 
-	let count = 0;
+	//let count = 0;
 	
 	for (let i = 0; i < camPoses.length; i++) {
 	
@@ -219,14 +238,34 @@ skeleton_vectors['LHRH'] = null;
     	
       		let partA = camPoses[i].skeleton[j][0];
       		let partB = camPoses[i].skeleton[j][1];
-      		
+
+	 
       		let keypoint = camPoses[i].pose.keypoints[j];
       		
-      		if (keypoint.score > 0.5)
+      		if (keypoint.score > 0.2)
       		{
-	  			camSkel[count]=createVector(partB.position.x - partA.position.x, partB.position.y - partA.position.y);
-	  			camSkel[count].name = partA["part"]+partB["part"];
-	  			count++;
+      		 	vectorCD=createVector(partB.position.x - partA.position.x, partB.position.y - partA.position.y);
+	 	 		vectorCD.name = partA["part"]+partB["part"];
+	 	 		
+	  			//camSkel[count]=createVector(partB.position.x - partA.position.x, partB.position.y - partA.position.y);
+	  			//camSkel[count].name = partA["part"]+partB["part"];
+	  			//count++;
+	  		}
+			if((c1==null)&& vectorCD.name == "leftElbowleftShoulder")
+				{	c1 = vectorCD; }
+			if ((c2==null) && vectorCD.name == "leftElbowleftWrist")
+				{	c2 = vectorCD; console.log("C1: ", c1); console.log("C2: ", c2);}
+	  		
+  	  		if((c1!=null)&&(c2!=null))
+	  		{	
+	  			let camAngle = Math.floor ( degrees(c2.angleBetween(c1)) );// Math.floor (n);
+	  			if(camAngle < Math.floor (statueAngles[s1.name+s2.name]))
+	  				{print("Angolo inferiore!"); select('#status').html('Imita la posizione del braccio sx (a dx dell\'immagine): angolo inferiore.');}
+	  			else if(camAngle > Math.floor (statueAngles[s1.name+s2.name]))
+	  				{print("Angolo maggiore!"); select('#status').html('Imita la posizione del braccio sx (a dx dell\'immagine): angolo maggiore.');}
+	  			else 
+	  				{ print("Angolo uguale!"); select('#status').html('Imita la posizione del braccio sx (a dx dell\'immagine): angolo uguale!!.');}
+	    		//console.log("Statue angle left ELBOWSHOULDER left ELBOWWRIST: ", statueAngles[s1.name+s2.name]);
 	  		}
 			//console.log("PART-A from showSkelVecs: ", partA["part"]);
 			//leftHipleftShoulderleftElbowleftShoulder
