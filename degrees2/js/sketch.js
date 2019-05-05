@@ -176,7 +176,6 @@ skeleton_vectors['LHRH'] = null;
 	console.log("THE POINT IS: ", point.position.y);
 
 	*/
-	
 	for (let i = 0; i < camPoses.length; i++) {
 		
 		//if(camPoses[i].pose.keypoints[0].part == "nose")
@@ -188,13 +187,16 @@ skeleton_vectors['LHRH'] = null;
       		let partB = camPoses[i].skeleton[j][1];
 
 	 
+	 
+
+
       		let keypoint = camPoses[i].pose.keypoints[j];
 
-      		if (keypoint.score > 0.2)
+      		if ((camPoses[i].skeleton[j][0].score > 0.2)&&(camPoses[i].skeleton[j][1].score > 0.2))  //keypoint.score > 0.2)
       		{
       		 	vectorCD=createVector(partB.position.x - partA.position.x, partB.position.y - partA.position.y);
 	 	 		vectorCD.name = partA["part"]+partB["part"];
-	 	 		
+	 	 		//console.log("**** partA[part]+partB[part]", partA["part"]+partB["part"]);
 	  			//camSkel[count]=createVector(partB.position.x - partA.position.x, partB.position.y - partA.position.y);
 	  			//camSkel[count].name = partA["part"]+partB["part"];
 	  			//count++;
@@ -206,9 +208,14 @@ skeleton_vectors['LHRH'] = null;
 			if ((LHS == null) && vectorCD.name == "leftHipleftShoulder")
 				{	LHS = vectorCD; console.log("LHS: ", LHS); console.log("LHS: ", LHS);}
 	  		
+	  		//console.log("*****CURRENT J: ", j);
+	  		//console.log("*****Keypoint cam-part: ", camPoses[i].pose.keypoints[j] );
 	  		
-	  		      		/*console.log("*****Keypoint cam-part: ", camPoses[i].pose.keypoints[9] );
-      		
+	  		
+	  		//console.log("******** wrist score: ",camPoses[i].pose.keypoints[9].score);
+			//console.log("******** wrist pos y: ",camPoses[i].pose.keypoints[9].position.y);
+	  		
+      		/*
       		if(keypoint.part == "leftWrist") 
       		{	lWristHeight = keypoint.position.y;	console.log("******wrist position NAME?: ", keypoint.part);}
       		if(keypoint.part == "leftShoulder") 
@@ -217,27 +224,15 @@ skeleton_vectors['LHRH'] = null;
       		//console.log("******wrist position NAME?: ", keypoint.part);
       		//console.log("******wrist position from CAM: ", lWristHeight);
       		*/
+      		
+      		
+      		
 	  		
 	  		//LES^LEW
   	  		if((LES!=null)&&(LEW!=null))
 	  		{	
 	  			let camAngle = Math.floor ( degrees(LEW.angleBetween(LES)) );// Math.floor (n);
-	  			//console.log("Angolo cam: ", camAngle);
-	  	    			    		
-	    		
-	    		/* //ALTEZZA POLSO RISPETTO AL CANVAS - DA RIVEDERE IN FUNZIONE DI: 
-	    		// - altezze relative a parti del corpo invece che il canvas
-	    		// - altezze relative a asse y invertita	    		
-	    		if( camPoses[i].pose.keypoints[9].position.y > poses[0].pose.keypoints[9].position.y+30 )
-	    			{console.log("Devi abbassare ancora il polso..");  select('#lWristHeight').html('devi decisamente abbassarlo.');}
-	    		else if(camPoses[i].pose.keypoints[9].position.y > poses[0].pose.keypoints[9].position.y+15 )
-	    			{print("Devi abbassare ancora il polso, ma ci siamo quasi!"); select('#lWristHeight').html('Devi abbassare ancora il polso, ma ci siamo quasi!');}
-	    		else if(camPoses[i].pose.keypoints[9].position.y < poses[0].pose.keypoints[9].position.y-30 )
-	    			{print("Devi sollevare ancora il polso.."); select('#lWristHeight').html('devi decisamente sollevarlo.');}
-	    		else if(camPoses[i].pose.keypoints[9].position.y < poses[0].pose.keypoints[9].position.y-15 )
-	    			{print("Devi sollevare ancora il polso, ma ci siamo quasi!"); select('#lWristHeight').html('Devi sollevare ancora il polso, ma ci siamo quasi!');}		
-	    		else {print("Altezza del polso ok!"); select('#lWristHeight').html('Così va bene!.');}
-				*/	    				    			
+	  			//console.log("Angolo cam: ", camAngle);  	    			 	    				    			
 	    		
 	    		if(camAngle < Math.floor(LESLEW)-20)//statueAngles[s1.name+s2.name])-1)
 	  				{print("Angolo LESLEW inferiore!"); select('#LESLEW').html('decisamente inferiore.');}
@@ -246,12 +241,12 @@ skeleton_vectors['LHRH'] = null;
 	  			
 	  			
 	  			else if(camAngle > Math.floor(LESLEW)+20)
-	  				{print("Angolo LESLEW maggiore!"); select('#LESLEW').html('decisamente maggiore.');}
+	  				{print("Angolo LESLEW maggiore! ", camAngle); select('#LESLEW').html('decisamente maggiore.');}
 	  			else if(camAngle > Math.floor(LESLEW)+10)
-	  				{print("Angolo LESLEW maggiore!"); select('#LESLEW').html('ancora maggiore, ma ci siamo quasi..');}	  	
+	  				{print("Angolo LESLEW maggiore!", camAngle); select('#LESLEW').html('ancora maggiore, ma ci siamo quasi..');}	  	
 	  				
-	  			else if( (camAngle > Math.floor(LESLEW)-5) && (camAngle < Math.floor(LESLEW)+5) )//statueAngles[s1.name+s2.name])-1)
-	  				{ print("Angolo LESLEW uguale!"); select('#LESLEW').html(' uguale!!.');}	  							
+	  			else if( (camAngle > Math.floor(LESLEW)-2) && (camAngle < Math.floor(LESLEW)+2) )//statueAngles[s1.name+s2.name])-1)
+	  				{ print("Angolo LESLEW uguale!", camAngle); select('#LESLEW').html(' uguale!!.');}	  							
 	  		 
 	  				
 	  		}
@@ -273,7 +268,7 @@ skeleton_vectors['LHRH'] = null;
 	  				{print("Angolo maggiore!"); select('#LHSLES').html('decisamente maggiore.');}
 	  			else if(camAngle > Math.floor(LHSLES)+10)//statueAngles[s1.name+s2.name])+1)
 	  				{print("Angolo maggiore!"); select('#LHSLES').html('ancora maggiore, ma ci siamo quasi...');}	  				
-	  			else if( (camAngle > Math.floor(LHSLES)-5) && (camAngle < Math.floor(LHSLES)+5) )
+	  			else if( (camAngle > Math.floor(LHSLES)-2) && (camAngle < Math.floor(LHSLES)+2) )
 	  				{ print("Angolo uguale!"); select('#LHSLES').html(' uguale!!.');}
 	    		//console.log("Statue angle left ELBOWSHOULDER left ELBOWWRIST: ", statueAngles[s1.name+s2.name]);
 	  		}	  		
@@ -282,10 +277,105 @@ skeleton_vectors['LHRH'] = null;
 			
       	}
       	//console.log("**********Vettore di keypoints: ",camPoses[i].pose.keypoints);
+      	
+      	
+      	
+	if(camPoses[i].pose.keypoints[9].score > 0.2 && camPoses[i].pose.keypoints[5].score > 0.2)
+    {   
+    	
+    	let yStatueWrists =  poses[0].pose.keypoints[9].position.y;
+    	let yStatueShoulder =  poses[0].pose.keypoints[5].position.y;
+		let yCamWrists =  camPoses[0].pose.keypoints[9].position.y;
+    	let yCamShoulder =  camPoses[0].pose.keypoints[5].position.y;
+    	
+    	let diffStatue = yAHeigthB(yStatueShoulder, yStatueWrists);
+    	let diffCam = yAHeigthB(yCamShoulder, yCamWrists);
+		let uOd = upOrDown(diffStatue, diffCam);
+		//lWristHeight
+		
+		//print("DIFF STATUE: ", diffStatue);
+		//print("DIFF CAM: ", diffCam);
+		switch(uOd){
+			case 0:
+				select('#lWristHeight').html(' perfetto!'); 
+			break;
+
+			case 1:
+				select('#lWristHeight').html('devi sollevarlo.');
+			break;
+			
+			case -1:
+				select('#lWristHeight').html('devi abbassarlo.');
+			break;
+		}
+		/*
+    	if(diffStatue  < 0)
+    		if(diffCam < 0) 
+				if((diffCam > diffStatue - 10) && (diffCam < diffStatue +10))
+					{print("*** ALTEZZA POLSO RISPETTO ALLA SPALLA: perfetto!"); select('#lWristHeight').html(' perfetto!'); }
+				else
+					{print("*** ALTEZZA POLSO RISPETTO ALLA SPALLA: troppo basso! devi sollevarlo!"); select('#lWristHeight').html('devi sollevarlo.');}
+			else
+				{print("*** ALTEZZA POLSO RISPETTO ALLA SPALLA: troppo alto. Portalo verso la spalla!"); select('#lWristHeight').html('devi abbassarlo.'); }
+				
+		else if(diffStatue  > 0)
+    		if(diffCam > 0) 
+				if((diffCam > diffStatue - 10) && (diffCam < diffStatue +10))
+					{print("*** ALTEZZA POLSO RISPETTO ALLA SPALLA: perfetto!"); }
+				else
+					{print("*** ALTEZZA POLSO RISPETTO ALLA SPALLA: troppo alto! devi abbassarlo!"); }
+			else
+				{print("*** ALTEZZA POLSO RISPETTO ALLA SPALLA: troppo basso. Portalo verso la spalla!"); }
+		*/		
+				
+		/*		
+		else if(diffStatue  > 0)
+				
+				
+				
+					
+				else if (diffCam < diffStatue)
+					print("*** ALTEZZA POLSO: SOLLEVA IL POLSO!!");
+		if(diffStatue < 0)
+    		if(diffCam < 0) 
+ 				if((diffCam > diffStatue - 10) && (diffCam < diffStatue +10))
+					print("*** ALTEZZA POLSO RISPETTO A SPALLA OK!");
+				else if (diffCam < diffStatue)
+					print("*** ALTEZZA POLSO: SOLLEVA IL POLSO!!");
+	
+		*/
+
+
+		/*
+    	//if +diff heigth b more a
+		else if ( diff < 0) //-diff height b less a
+		else // equals
+		*/
+
+    	//if( (poses[0].pose.keypoints[9].position.y > poses[0].pose.keypoints[9].position.y - 5) &&
+    	//(poses[0].pose.keypoints[9].position.y > poses[0].pose.keypoints[9].position.y + 5)
+    	//)
+    	
+	    		//ALTEZZA POLSO RISPETTO AL CANVAS - DA RIVEDERE IN FUNZIONE DI: 
+	    		// - altezze relative a parti del corpo invece che il canvas
+	    		// - altezze relative a asse y invertita
+	    /*	    		
+		if( camPoses[i].pose.keypoints[9].position.y > poses[0].pose.keypoints[9].position.y+30 )
+	    	{console.log("Devi abbassare ancora il polso..");  select('#lWristHeight').html('devi decisamente abbassarlo.');}
+	    else if(camPoses[i].pose.keypoints[9].position.y > poses[0].pose.keypoints[9].position.y+15 )
+	    	{print("Devi abbassare ancora il polso, ma ci siamo quasi!"); select('#lWristHeight').html('Devi abbassare ancora il polso, ma ci siamo quasi!');}
+	    else if(camPoses[i].pose.keypoints[9].position.y < poses[0].pose.keypoints[9].position.y-30 )
+	    	{print("Devi sollevare ancora il polso.."); select('#lWristHeight').html('devi decisamente sollevarlo.');}
+	    else if(camPoses[i].pose.keypoints[9].position.y < poses[0].pose.keypoints[9].position.y-15 )
+	    	{print("Devi sollevare ancora il polso, ma ci siamo quasi!"); select('#lWristHeight').html('Devi sollevare ancora il polso, ma ci siamo quasi!');}		
+	    else {print("Altezza del polso ok!"); select('#lWristHeight').html('Così va bene!.');}
+		*/
+	}
       }
      //console.log("vettori da cam: ",camSkel);
      
      
+				
 
 	/*
 	camSkel.forEach(function(entry) {
@@ -384,4 +474,28 @@ function drawSkeleton()
   }
 }
 
+//function that calculate diff between a, b on y axs
+//if( diff  > 0) // +diff heigth b more a
+//else if ( diff < 0) //-diff height b less a
+function yAHeigthB(a, b)
+{
+	return (a-b);
+}
 
+
+//compare diffs between 2 statuePoint vs 2 camPoint. If the cam point have to be upper, return 1, viceversa return -1. If its ok return 0
+function upOrDown(diffStatue, diffCam)
+{
+	
+	let s = abs(diffStatue);
+	let c = abs(diffCam);
+	if( (c > (s - 3)) && (c < (s + 3)) ) //se la differenza tra spalla e polso di statue e di cam è nel range di -3/+3 è ok
+	//if((diffStatue == 0) && (diffCam ==0))
+		return 0;//ok
+	
+	else if(diffCam<diffStatue) //se la differenza di cam è inferiore si deve sollevare il polso
+		return 1;
+	else	//viceversa sarà maggiore dunque abbassare il polso
+		return -1;
+
+}
